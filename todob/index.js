@@ -5,59 +5,58 @@ import pg from "pg";
 import { authenticateToken } from "./auth.js";
 import jwt from "jsonwebtoken";
 import cors from "cors";
-const jwtSecret = process.env.JWT_SECRET;
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
-const dbHost = process.env.DB_HOST;
-const dbPort = process.env.DB_PORT;
-const dbName = process.env.DB_NAME;
-const app = express();
-const port = process.env.PORT;
 
+const app = express();
+const port = process.env.PORT || 3000;
+
+// ✅ Database connection (FINAL)
 const db = new pg.Client({
-  user: dbUser,
-  host: dbHost,
-  database: dbName,
-  password: dbPassword,
-  port: dbPort,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
-db.connect().then(() => console.log('✅ Connected to PostgreSQL'));
-app.use(cors()); 
-app.use(bodyParser.json());
-app.use(express.static("public"));
+
+// ✅ Connect to DB
+db.connect()
+  .then(() => console.log("Connected to DB"))
+  .catch(err => console.error("DB connection error:", err));
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+// Start server
+
 app.post("/signup", async (req, res) => {
   try {
     const { email, password , username } = req.body;
-
     // Check if email & password are provided
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
-
     // Check if user already exists
     const existingUser = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ message: "User already exists" });
     }
-
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
     // Store user in database
     const result = await db.query(
       "INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
       [email, username || 'Unknown', hashedPassword]
     );
-
     const user = result.rows[0];
-
     // Generate JWT token
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-
     //  Send token with response
     res.status(201).json({
       message: "User created successfully",
@@ -213,7 +212,6 @@ app.post("/login", async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-
     // Generate JWT token
     const token = jwt.sign(
       { user_id: user.rows[0].id, email: user.rows[0].email },
@@ -228,7 +226,6 @@ app.post("/login", async (req, res) => {
   }
 });
  
-
 app.listen(port, () => {
-  console.log(`✅ Server running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
