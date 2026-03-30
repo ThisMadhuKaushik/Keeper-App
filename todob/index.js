@@ -27,7 +27,10 @@ db.connect()
   .catch(err => console.error("DB connection error:", err));
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: "https://keeper-app-zeta-ashen.vercel.app",
+  credentials: true
+}));
 app.use(express.json());
 // Start server
 app.get("/", (req, res) => {
