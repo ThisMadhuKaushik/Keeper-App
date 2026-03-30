@@ -30,7 +30,9 @@ db.connect()
 app.use(cors());
 app.use(express.json());
 // Start server
-
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
 app.post("/signup", async (req, res) => {
   try {
     const { email, password , username } = req.body;
@@ -205,7 +207,7 @@ app.post("/login", async (req, res) => {
     const user = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     // console.log(user);
     if (user.rows.length === 0) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json(n{ message: "Invalid email or password" });
     }
 
     const validPassword = await bcrypt.compare(password, user.rows[0].password_hash);
