@@ -15,7 +15,7 @@ function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState(null); // jo task edit ho rha
   const [newTitle, setNewTitle] = useState(""); // naya title input
-
+const API = import.meta.env.VITE_API_URL;
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -26,7 +26,7 @@ function Home() {
         return;
       }
       try {
-        const response = await fetch(`http://localhost:3000/users/${user_id}/tasks`, {
+        const response = await fetch(`${API}/users/${user_id}/tasks`,{
           headers: {
             Authorization: `Bearer ${token}`, // JWT token
           },
@@ -56,7 +56,7 @@ async function handleUpdate() {
   // const token = localStorage.getItem("token");
   if (!token || !currentTask) return;
   try {
-    const response = await fetch(`http://localhost:3000/tasks/${currentTask.task_id}/title`, {
+   const response = await fetch(`${API}/tasks/${currentTask.task_id}/title`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ async function handleUpdate() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:3000/tasks", {
+     const response = await fetch(`${API}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +141,7 @@ async function handleUpdate() {
     let copyTask = [...tasks];
     try{
       //  const token = localStorage.getItem('token');
-       const response = await fetch(`http://localhost:3000/tasks/${dragTask.task_id}/status`,{
+      const response = await fetch(`${API}/tasks/${dragTask.task_id}/status`,{
         method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -198,7 +198,7 @@ console.log(task_id);
     return;
   }
   try{
-    const response = await fetch(`http://localhost:3000/tasks/${task_id}`,{
+    const response = await fetch(`${API}/tasks/${task_id}`,{
       method:"DELETE",
       headers:{
           "Content-Type": "application/json",

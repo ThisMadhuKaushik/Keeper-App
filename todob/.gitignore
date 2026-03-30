@@ -1,8 +1,7 @@
 todob/node_modules
 todob/.env
 todob/.env.local
-
-
+/node_modules
 # Logs
 npm-debug.log*
 yarn-debug.log*

@@ -2,7 +2,7 @@
 import "./Login.css"; // You can reuse the same CSS
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+const API = import.meta.env.VITE_API_URL;
 export default function Signup() {
   const [username, setName] = useState(""); // optional name
   const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ export default function Signup() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3000/signup", {
+      const response = await fetch(`${API}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

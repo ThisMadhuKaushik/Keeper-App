@@ -2,6 +2,7 @@ import "./Login.css"
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+const API = import.meta.env.VITE_API_URL;
 export default function Login() {
    const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,7 @@ export default function Login() {
      setError("");
 
     try {
-      const response = await fetch("http://localhost:3000/login", {
+     const response = await fetch(`${API}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
