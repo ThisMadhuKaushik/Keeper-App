@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
 });
 app.post("/signup", async (req, res) => {
   try {
-    const { email, password , username } = req.body;
+   const { email, password, name } = req.body;
     // Check if email & password are provided
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
@@ -48,10 +48,10 @@ app.post("/signup", async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     // Store user in database
-    const result = await db.query(
-      "INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
-      [email, username || 'Unknown', hashedPassword]
-    );
+     const result = await db.query(
+   "INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
+   [email, name || 'Unknown', hashedPassword]
+   );
     const user = result.rows[0];
     // Generate JWT token
     const token = jwt.sign(
