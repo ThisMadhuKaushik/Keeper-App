@@ -8,7 +8,7 @@ import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
-
+const jwtSecret = process.env.JWT_SECRET;
 // ✅ Database connection (FINAL)
 const db = new pg.Client({
   user: process.env.DB_USER,
@@ -207,7 +207,7 @@ app.post("/login", async (req, res) => {
     const user = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     // console.log(user);
     if (user.rows.length === 0) {
-      return res.status(400).json(n{ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const validPassword = await bcrypt.compare(password, user.rows[0].password_hash);
